@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ramo Buchón 💛</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    min-height: 100vh;
+    overflow: hidden;
+    font-family: 'Georgia', serif;
+  }
+
+  body {
+    background: radial-gradient(circle at 50% 40%, #fff8dc, #ffe680 55%, #f2c200);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* ====== PÉTALOS CAYENDO ====== */
+  .petals-fall {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 30;
+  }
+  .falling {
+    position: absolute;
+    top: -60px;
+    width: 18px;
+    height: 22px;
+    background: radial-gradient(circle at 30% 30%, #fff0a1, #f9c400);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: .85;
+    box-shadow: inset -1px -1px 3px rgba(0,0,0,.1);
+    animation: fall linear infinite;
+  }
+  .falling.orange { background: radial-gradient(circle at 30% 30%, #ffe08a, #ff9d1c); }
+  .falling.white  { background: radial-gradient(circle at 30% 30%, #ffffff, #f1e6a6); }
+  .falling.green  { background: radial-gradient(circle at 30% 30%, #b6e07a, #4d8b2c); }
+
+  @keyframes fall {
+    0% {
+      transform: translateY(-60px) translateX(0) rotate(0deg);
+      opacity: 0;
+    }
+    10% { opacity: .9; }
+    100% {
+      transform: translateY(110vh) translateX(var(--drift, 40px)) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  /* ====== ESCENARIO ====== */
+  .stage {
+    position: relative;
+    width: 480px;
+    height: 640px;
+  }
+
+  .stage::before {
+    content: "";
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(255,255,255,.65), transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .stage::after {
+    content: "";
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 30px;
+    background: radial-gradient(ellipse, rgba(60,35,0,.5), transparent 70%);
+    border-radius: 50%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ====== FRASE CON EFECTO MÁQUINA DE ESCRIBIR ====== */
+  .title-wrap {
+    position: absolute;
+    top: -10px;
+    width: 100%;
+    text-align: center;
+    z-index: 20;
+  }
+  .title {
+    display: inline-block;
+    font-style: italic;
+    color: #7a5c00;
+    font-size: 1.15rem;
+    text-shadow: 0 1px 2px rgba(255,255,255,.6);
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 2px solid #7a5c00;
+    padding-right: 4px;
+    width: 0;
+    animation:
+      typing 3.2s steps(46, end) 0.4s forwards,
+      blink 0.75s step-end infinite;
+  }
+  @keyframes typing {
+    from { width: 0; }
+    to   { width: 46ch; }
+  }
+  @keyframes blink {
+    0%, 100% { border-color: #7a5c00; }
+    50%      { border-color: transparent; }
+  }
+
+  /* ====== RAMO ====== */
+  .bouquet {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 380px;
+    height: 520px;
+    z-index: 10;
+    animation: floatBouquet 6s ease-in-out infinite;
+  }
+  @keyframes floatBouquet {
+    0%,100% { transform: translateX(-50%) translateY(0) rotate(-.4deg); }
+    50%     { transform: translateX(-50%) translateY(-6px) rotate(.4deg); }
+  }
+
+  .stems {
+    position: absolute;
+    bottom: 130px;
+    left: 50%;
+    width: 0; height: 0;
+    z-index: 1;
+  }
+  .stem {
+    position: absolute;
+    bottom: 0;
+    left: -3px;
+    width: 6px;
+    height: 230px;
+    background: linear-gradient(90deg, #2f5f1f, #4d8b2c, #2f5f1f);
+    border-radius: 3px;
+    transform-origin: bottom center;
+  }
+
+  .head {
+    position: absolute;
+    bottom: 300px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 260px;
+    z-index: 5;
+  }
+
+  /* ====== HOJAS VERDES ====== */
+  .leaf {
+    position: absolute;
+    width: 14px;
+    height: 70px;
+    background: linear-gradient(180deg,
+      #a4cf6b 0%,
+      #6b9e38 55%,
+      #47701f 100%);
+    border-radius: 100% 0 100% 0 / 100% 0 100% 0;
+    transform-origin: bottom center;
+    z-index: 4;
+    box-shadow:
+      inset 0 0 6px rgba(0,0,0,.2),
+      0 2px 3px rgba(0,0,0,.12);
+    animation: leafSway 5s ease-in-out infinite;
+  }
+  .leaf::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg,
+      transparent 45%,
+      rgba(255,255,255,.4) 50%,
+      transparent 55%);
+    pointer-events: none;
+  }
+  @keyframes leafSway {
+    0%,100% { transform: rotate(var(--r, 0deg)); }
+    50%     { transform: rotate(calc(var(--r, 0deg) + 3deg)); }
+  }
+
+  /* ====== FLORES ====== */
+  .flower {
+    position: absolute;
+    width: 0;
+    height: 0;
+    animation: sway 4s ease-in-out infinite;
+  }
+  @keyframes sway {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50%     { transform: translateY(-4px) rotate(2deg); }
+  }
+
+  .petal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    box-shadow: inset -2px -2px 5px rgba(0,0,0,.12),
+                inset 2px 2px 4px rgba(255,255,255,.5);
+    transform-origin: center center;
+  }
+
+  .core {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 35%, #b07a2a 0%, #8a5a1a 45%, #5c3a0a 100%),
+      radial-gradient(circle, rgba(0,0,0,.18) 1px, transparent 1.6px);
+    background-size: 100% 100%, 6px 6px;
+    background-position: 0 0, 0 0;
+    box-shadow:
+      inset 0 0 4px rgba(0,0,0,.35),
+      inset 0 -3px 6px rgba(0,0,0,.25),
+      0 0 6px rgba(120,80,0,.25);
+    transform: translate(-50%,-50%);
+  }
+
+  .f-yellow .petal { background: radial-gradient(circle at 30% 30%, #fff0a1, #f9c400); }
+  .f-orange .petal { background: radial-gradient(circle at 30% 30%, #ffe08a, #ff9d1c); }
+  .f-white  .petal { background: radial-gradient(circle at 30% 30%, #ffffff, #f1e6a6); }
+
+  /* ====== TULIPÁN ======
+     Se compone de 3 pétalos superpuestos que forman la copa. */
+  .tulip {
+    position: absolute;
+    width: 0;
+    height: 0;
+    animation: sway 4s ease-in-out infinite;
+  }
+  .tulip-petal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50% 50% 45% 45% / 70% 70% 30% 30%;
+    background: linear-gradient(180deg, #ffe97a 0%, #ffcc00 60%, #e0a800 100%);
+    box-shadow:
+      inset -2px -2px 5px rgba(0,0,0,.15),
+      inset 2px 2px 4px rgba(255,255,255,.4);
+    transform-origin: center center;
+  }
+  /* Pétalo central más grande y delante */
+  .tulip-petal.mid {
+    background: linear-gradient(180deg, #fff3b0 0%, #ffd93b 55%, #e6b800 100%);
+    z-index: 3;
+  }
+  .tulip-petal.side-l {
+    transform-origin: bottom right;
+    z-index: 2;
+    filter: brightness(.92);
+  }
+  .tulip-petal.side-r {
+    transform-origin: bottom left;
+    z-index: 2;
+    filter: brightness(.92);
+  }
+  /* Base del tulipán: pequeños tallos verdes */
+  .tulip-stem {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 28px;
+    background: linear-gradient(180deg, #4d8b2c, #2f5f1f);
+    border-radius: 3px;
+    transform: translate(-50%, 0);
+    z-index: 1;
+  }
+
+  /* ====== PAPEL KRAFT MARRÓN ====== */
+  .wrap {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    z-index: 10;
+    filter: drop-shadow(0 20px 25px rgba(50,25,0,.45));
+  }
+  .wrap .border {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #4a2f10 0%, #2e1c08 100%);
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    border-radius: 0 0 30% 30% / 0 0 20% 20%;
+    z-index: -1;
+    transform: scale(1.02);
+    transform-origin: bottom center;
+  }
+  .wrap .back {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #8b5a2b 0%, #6b4018 55%, #4a2c0e 100%);
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    border-radius: 0 0 30% 30% / 0 0 20% 20%;
+  }
+  .wrap .front {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg,
+        rgba(0,0,0,.18) 0%,
+        rgba(0,0,0,0) 12%,
+        rgba(0,0,0,0) 50%,
+        rgba(0,0,0,0) 88%,
+        rgba(0,0,0,.18) 100%),
+      linear-gradient(160deg, #c89b6a 0%, #a07544 45%, #7a5225 100%);
+    clip-path: polygon(30% 10%, 70% 10%, 100% 100%, 0% 100%);
+    border-radius: 0 0 35% 35% / 0 0 22% 22%;
+    box-shadow:
+      inset 8px 0 12px -8px rgba(0,0,0,.4),
+      inset -8px 0 12px -8px rgba(0,0,0,.4),
+      inset 0 -10px 18px -6px rgba(40,20,0,.4);
+  }
+  .wrap .front::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 90%;
+    background: linear-gradient(180deg,
+      rgba(255,235,200,.35),
+      rgba(255,235,200,.0) 60%);
+    border-radius: 50% 50% 40% 40% / 20% 20% 80% 80%;
+    pointer-events: none;
+  }
+
+  /* ====== LAZO ====== */
+  .ribbon {
+    position: absolute;
+    bottom: 265px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 30px;
+    background: linear-gradient(180deg, #ffd11a, #d9a300);
+    border-radius: 6px;
+    z-index: 15;
+    box-shadow: 0 4px 8px rgba(80,45,0,.5);
+  }
+  .ribbon::before,
+  .ribbon::after {
+    content: "";
+    position: absolute;
+    top: -18px;
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(160deg, #ffe066, #e6b800);
+    border-radius: 60% 60% 40% 40% / 70% 70% 30% 30%;
+    box-shadow: 0 4px 8px rgba(80,45,0,.4);
+  }
+  .ribbon::before { left: -38px; transform: rotate(-25deg); }
+  .ribbon::after  { right: -38px; transform: rotate(25deg) scaleX(-1); }
+  .ribbon .knot {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 22px; height: 22px;
+    background: radial-gradient(circle at 35% 35%, #ffe066, #c99500);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    box-shadow: inset -1px -1px 3px rgba(0,0,0,.35);
+  }
+
+  /* ====== BOTÓN "¿POR QUÉ TE LO REGALO?" ====== */
+  .why-btn {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(160deg, #ffd93b, #e6a800);
+    color: #4a2c0e;
+    border: 2px solid #7a5225;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-family: 'Georgia', serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    cursor: pointer;
+    z-index: 25;
+    box-shadow: 0 6px 14px rgba(60,35,0,.35);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .why-btn:hover {
+    transform: translateX(-50%) translateY(-3px);
+    box-shadow: 0 10px 20px rgba(60,35,0,.45);
+  }
+  .why-btn:active { transform: translateX(-50%) translateY(0); }
+
+  /* ====== MENSAJE OCULTO ====== */
+  .why-msg {
+    position: absolute;
+    bottom: -140px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    width: 340px;
+    padding: 18px 22px 22px;
+    background: #fffdf3;
+    border: 2px solid #d4a300;
+    border-radius: 16px;
+    color: #5c3a0a;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 0.98rem;
+    line-height: 1.5;
+    text-align: center;
+    box-shadow: 0 12px 25px rgba(80,45,0,.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .4s ease, transform .4s ease;
+    z-index: 40;
+  }
+  .why-msg.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+  .why-msg::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 20px;
+    height: 20px;
+    background: #fffdf3;
+    border-left: 2px solid #d4a300;
+    border-top: 2px solid #d4a300;
+  }
+  /* Firma */
+  .signature {
+    display: block;
+    margin-top: 12px;
+    font-family: 'Brush Script MT', 'Segoe Script', cursive;
+    font-size: 1.3rem;
+    font-style: normal;
+    color: #a06a00;
+    letter-spacing: .5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="petals-fall" id="petalsFall"></div>
+
+<div class="stage">
+
+  <div class="title-wrap">
+    <p class="title">Un ramo buchón de flores amarillas para ti 💛</p>
+  </div>
+
+  <div class="bouquet">
+    <div class="stems">
+      <div class="stem" style="transform: rotate(-24deg); height:250px;"></div>
+      <div class="stem" style="transform: rotate(-14deg); height:250px;"></div>
+      <div class="stem" style="transform: rotate(-5deg);  height:250px;"></div>
+      <div class="stem" style="transform: rotate(5deg);   height:250px;"></div>
+      <div class="stem" style="transform: rotate(14deg);  height:250px;"></div>
+      <div class="stem" style="transform: rotate(24deg);  height:250px;"></div>
+    </div>
+
+    <div class="head" id="head"></div>
+
+    <div class="wrap">
+      <div class="border"></div>
+      <div class="back"></div>
+      <div class="front"></div>
+    </div>
+    <div class="ribbon"><div class="knot"></div></div>
+  </div>
+
+  <button class="why-btn" id="whyBtn">¿Quieres saber por qué te lo regalo? 💌</button>
+  <div class="why-msg" id="whyMsg">
+    Porque las flores amarillas se regalan a quien ilumina tus días.
+    Y tú, sin darte cuenta, haces que hasta los días grises se vean de este color. 🌻💛
+    <span class="signature">Con cariño, danizin 💛</span>
+  </div>
+</div>
+
+<script>
+  /* ========= HOJAS VERDES ========= */
+  const leaves = [
+    { x: 145, y: 250, r: -55, delay: 0.0 },
+    { x: 130, y: 240, r: -75, delay: 0.6 },
+    { x: 175, y: 250, r:  55, delay: 0.3 },
+    { x: 190, y: 240, r:  75, delay: 0.9 },
+    { x: 155, y: 230, r: -30, delay: 0.4 },
+    { x: 165, y: 230, r:  30, delay: 1.1 },
+  ];
+
+  const head = document.getElementById('head');
+
+  /* ========= FLORES (girasoles, margaritas) ========= */
+  const flowers = [
+    { x: 160, y: 45,  s: 90,  c: 'f-yellow' },
+    { x: 100, y: 75,  s: 90,  c: 'f-orange' },
+    { x: 175, y: 70,  s: 100, c: 'f-yellow' },
+    { x: 240, y: 75,  s: 90,  c: 'f-white'  },
+    { x: 45,  y: 120, s: 95,  c: 'f-yellow' },
+    { x: 120, y: 115, s: 105, c: 'f-orange' },
+    { x: 195, y: 115, s: 105, c: 'f-yellow' },
+    { x: 270, y: 120, s: 95,  c: 'f-white'  },
+    { x: 75,  y: 180, s: 100, c: 'f-orange' },
+    { x: 155, y: 185, s: 110, c: 'f-yellow' },
+    { x: 235, y: 180, s: 100, c: 'f-orange' },
+    { x: 175, y: 150, s: 85,  c: 'f-white'  },
+  ];
+
+  flowers.forEach((f, i) => {
+    const flower = document.createElement('div');
+    flower.className = 'flower ' + f.c;
+    flower.style.left = f.x + 'px';
+    flower.style.top  = f.y + 'px';
+    flower.style.animationDelay = (i * 0.25) + 's';
+    flower.style.zIndex = 100 - i;
+
+    const petalCount = 8;
+    const petalW = f.s * 0.42;
+    const petalH = f.s * 0.50;
+    const radius = f.s * 0.26;
+
+    for (let j = 0; j < petalCount; j++) {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      const angle = (360 / petalCount) * j;
+      petal.style.width  = petalW + 'px';
+      petal.style.height = petalH + 'px';
+      petal.style.transform =
+        `translate(-50%, -50%) rotate(${angle}deg) translateY(-${radius}px)`;
+      flower.appendChild(petal);
+    }
+
+    const core = document.createElement('div');
+    core.className = 'core';
+    core.style.width  = (f.s * 0.34) + 'px';
+    core.style.height = (f.s * 0.34) + 'px';
+    core.style.transform = 'translate(-50%, -50%)';
+    flower.appendChild(core);
+
+    head.appendChild(flower);
+  });
+
+  /* ========= TULIPANES AMARILLOS =========
+     Cada tulipán tiene 3 pétalos + un tallito verde.
+     Se colocan distribuidos entre las flores, en la capa superior. */
+  const tulips = [
+    { x: 85,  y: 110, s: 55, delay: 0.4 },
+    { x: 245, y: 110, s: 55, delay: 0.9 },
+    { x: 55,  y: 165, s: 60, delay: 0.2 },
+    { x: 275, y: 165, s: 60, delay: 1.2 },
+    { x: 165, y: 195, s: 58, delay: 0.6 },
+  ];
+
+  tulips.forEach((t, i) => {
+    const tulip = document.createElement('div');
+    tulip.className = 'tulip';
+    tulip.style.left = t.x + 'px';
+    tulip.style.top  = t.y + 'px';
+    tulip.style.animationDelay = t.delay + 's';
+    // Los tulipanes van por encima de las flores pero por debajo del lazo
+    tulip.style.zIndex = 300 + i;
+
+    /* Tallito verde que sale de la base del tulipán */
+    const stem = document.createElement('div');
+    stem.className = 'tulip-stem';
+    tulip.appendChild(stem);
+
+    /* Pétalo izquierdo */
+    const pL = document.createElement('div');
+    pL.className = 'tulip-petal side-l';
+    pL.style.width  = (t.s * 0.55) + 'px';
+    pL.style.height = (t.s * 1.05) + 'px';
+    pL.style.transform =
+      `translate(-95%, -85%) rotate(-18deg)`;
+    tulip.appendChild(pL);
+
+    /* Pétalo derecho */
+    const pR = document.createElement('div');
+    pR.className = 'tulip-petal side-r';
+    pR.style.width  = (t.s * 0.55) + 'px';
+    pR.style.height = (t.s * 1.05) + 'px';
+    pR.style.transform =
+      `translate(-5%, -85%) rotate(18deg)`;
+    tulip.appendChild(pR);
+
+    /* Pétalo central (delante) */
+    const pM = document.createElement('div');
+    pM.className = 'tulip-petal mid';
+    pM.style.width  = (t.s * 0.62) + 'px';
+    pM.style.height = (t.s * 1.15) + 'px';
+    pM.style.transform = 'translate(-50%, -95%)';
+    tulip.appendChild(pM);
+
+    head.appendChild(tulip);
+  });
+
+  /* Hojas: se dibujan al final para quedar por encima */
+  leaves.forEach(l => {
+    const leaf = document.createElement('div');
+    leaf.className = 'leaf';
+    leaf.style.left = l.x + 'px';
+    leaf.style.top  = l.y + 'px';
+    leaf.style.setProperty('--r', l.r + 'deg');
+    leaf.style.transform = `rotate(${l.r}deg)`;
+    leaf.style.animationDelay = l.delay + 's';
+    leaf.style.zIndex = 200;
+    head.appendChild(leaf);
+  });
+
+  /* ========= PÉTALOS CAYENDO ========= */
+  const fallBox = document.getElementById('petalsFall');
+  const tones = ['', '', 'orange', '', 'white', '', 'orange', 'green', '', 'white'];
+  const TOTAL = 26;
+
+  for (let i = 0; i < TOTAL; i++) {
+    const p = document.createElement('div');
+    p.className = 'falling ' + tones[i % tones.length];
+
+    const size = 10 + Math.random() * 16;
+    p.style.width  = size + 'px';
+    p.style.height = (size * 1.2) + 'px';
+    p.style.left   = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (6 + Math.random() * 6) + 's';
+    p.style.animationDelay    = (Math.random() * 8) + 's';
+    p.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
+    p.style.opacity = 0.5 + Math.random() * 0.5;
+
+    fallBox.appendChild(p);
+  }
+
+  /* ========= BOTÓN "¿POR QUÉ TE LO REGALO?" ========= */
+  const btn = document.getElementById('whyBtn');
+  const msg = document.getElementById('whyMsg');
+
+  btn.addEventListener('click', () => {
+    msg.classList.toggle('show');
+    if (msg.classList.contains('show')) {
+      btn.textContent = 'Cerrar 💛';
+    } else {
+      btn.textContent = '¿Quieres saber por qué te lo regalo? 💌';
+    }
+  });
+</script>
+</body>
+</html>
