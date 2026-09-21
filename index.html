@@ -243,50 +243,61 @@
   .f-white  .petal { background: radial-gradient(circle at 30% 30%, #ffffff, #f1e6a6); }
 
   /* ====== TULIPÁN ======
-     Se compone de 3 pétalos superpuestos que forman la copa. */
+     Copa cerrada formada por 3 pétalos que comparten la base. */
   .tulip {
     position: absolute;
     width: 0;
     height: 0;
     animation: sway 4s ease-in-out infinite;
   }
-  .tulip-petal {
+  .tulip-cup {
     position: absolute;
     left: 0;
     top: 0;
-    border-radius: 50% 50% 45% 45% / 70% 70% 30% 30%;
-    background: linear-gradient(180deg, #ffe97a 0%, #ffcc00 60%, #e0a800 100%);
+    transform: translate(-50%, -100%);  /* la base de la copa en (0,0) */
+  }
+  .tulip-petal {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform-origin: bottom center;
+    border-radius: 50% 50% 15% 15% / 70% 70% 30% 30%;
+    background: linear-gradient(180deg,
+      #fff3b0 0%,
+      #ffd93b 55%,
+      #e0a800 100%);
     box-shadow:
-      inset -2px -2px 5px rgba(0,0,0,.15),
+      inset -2px -2px 4px rgba(0,0,0,.18),
       inset 2px 2px 4px rgba(255,255,255,.4);
-    transform-origin: center center;
   }
-  /* Pétalo central más grande y delante */
-  .tulip-petal.mid {
-    background: linear-gradient(180deg, #fff3b0 0%, #ffd93b 55%, #e6b800 100%);
-    z-index: 3;
+  .tulip-petal.l {
+    transform: translateX(-50%) rotate(-22deg);
+    filter: brightness(.9);
+    z-index: 1;
   }
-  .tulip-petal.side-l {
-    transform-origin: bottom right;
+  .tulip-petal.r {
+    transform: translateX(-50%) rotate(22deg);
+    filter: brightness(.9);
+    z-index: 1;
+  }
+  .tulip-petal.c {
+    transform: translateX(-50%);
+    background: linear-gradient(180deg,
+      #fff8d0 0%,
+      #ffe066 55%,
+      #e6b800 100%);
     z-index: 2;
-    filter: brightness(.92);
   }
-  .tulip-petal.side-r {
-    transform-origin: bottom left;
-    z-index: 2;
-    filter: brightness(.92);
-  }
-  /* Base del tulipán: pequeños tallos verdes */
   .tulip-stem {
     position: absolute;
     left: 0;
     top: 0;
-    width: 5px;
-    height: 28px;
+    width: 4px;
+    height: 24px;
     background: linear-gradient(180deg, #4d8b2c, #2f5f1f);
-    border-radius: 3px;
+    border-radius: 2px;
     transform: translate(-50%, 0);
-    z-index: 1;
+    z-index: 0;
   }
 
   /* ====== PAPEL KRAFT MARRÓN ====== */
@@ -451,7 +462,6 @@
     border-left: 2px solid #d4a300;
     border-top: 2px solid #d4a300;
   }
-  /* Firma */
   .signature {
     display: block;
     margin-top: 12px;
@@ -497,7 +507,7 @@
   <div class="why-msg" id="whyMsg">
     Porque las flores amarillas se regalan a quien ilumina tus días.
     Y tú, sin darte cuenta, haces que hasta los días grises se vean de este color. 🌻💛
-    <span class="signature">Con cariño, danizin 💛</span>
+    <span class="signature">Con cariño, tu nombre 💛</span>
   </div>
 </div>
 
@@ -565,14 +575,12 @@
   });
 
   /* ========= TULIPANES AMARILLOS =========
-     Cada tulipán tiene 3 pétalos + un tallito verde.
-     Se colocan distribuidos entre las flores, en la capa superior. */
+     Solo 4, pequeños, asomándose entre las flores. */
   const tulips = [
-    { x: 85,  y: 110, s: 55, delay: 0.4 },
-    { x: 245, y: 110, s: 55, delay: 0.9 },
-    { x: 55,  y: 165, s: 60, delay: 0.2 },
-    { x: 275, y: 165, s: 60, delay: 1.2 },
-    { x: 165, y: 195, s: 58, delay: 0.6 },
+    { x: 90,  y: 130, s: 42, delay: 0.4 },
+    { x: 235, y: 130, s: 42, delay: 0.9 },
+    { x: 130, y: 95,  s: 40, delay: 0.2 },
+    { x: 200, y: 95,  s: 40, delay: 1.2 },
   ];
 
   tulips.forEach((t, i) => {
@@ -581,39 +589,38 @@
     tulip.style.left = t.x + 'px';
     tulip.style.top  = t.y + 'px';
     tulip.style.animationDelay = t.delay + 's';
-    // Los tulipanes van por encima de las flores pero por debajo del lazo
-    tulip.style.zIndex = 300 + i;
+    tulip.style.zIndex = 50 - i;   /* entre las flores, no encima */
 
-    /* Tallito verde que sale de la base del tulipán */
+    /* Tallito */
     const stem = document.createElement('div');
     stem.className = 'tulip-stem';
     tulip.appendChild(stem);
 
-    /* Pétalo izquierdo */
+    /* Copa con 3 pétalos que comparten la base */
+    const cup = document.createElement('div');
+    cup.className = 'tulip-cup';
+    cup.style.width  = t.s + 'px';
+    cup.style.height = (t.s * 1.5) + 'px';
+
     const pL = document.createElement('div');
-    pL.className = 'tulip-petal side-l';
+    pL.className = 'tulip-petal l';
     pL.style.width  = (t.s * 0.55) + 'px';
-    pL.style.height = (t.s * 1.05) + 'px';
-    pL.style.transform =
-      `translate(-95%, -85%) rotate(-18deg)`;
-    tulip.appendChild(pL);
+    pL.style.height = (t.s * 1.4) + 'px';
 
-    /* Pétalo derecho */
     const pR = document.createElement('div');
-    pR.className = 'tulip-petal side-r';
+    pR.className = 'tulip-petal r';
     pR.style.width  = (t.s * 0.55) + 'px';
-    pR.style.height = (t.s * 1.05) + 'px';
-    pR.style.transform =
-      `translate(-5%, -85%) rotate(18deg)`;
-    tulip.appendChild(pR);
+    pR.style.height = (t.s * 1.4) + 'px';
 
-    /* Pétalo central (delante) */
-    const pM = document.createElement('div');
-    pM.className = 'tulip-petal mid';
-    pM.style.width  = (t.s * 0.62) + 'px';
-    pM.style.height = (t.s * 1.15) + 'px';
-    pM.style.transform = 'translate(-50%, -95%)';
-    tulip.appendChild(pM);
+    const pC = document.createElement('div');
+    pC.className = 'tulip-petal c';
+    pC.style.width  = (t.s * 0.6) + 'px';
+    pC.style.height = (t.s * 1.5) + 'px';
+
+    cup.appendChild(pL);
+    cup.appendChild(pR);
+    cup.appendChild(pC);
+    tulip.appendChild(cup);
 
     head.appendChild(tulip);
   });
